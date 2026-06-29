@@ -3,8 +3,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "cd ../client && npm install && npm run build",
-    "postinstall": "npm run build",
     "start": "node server.js"
   },
   "dependencies": {

@@ -1,14 +1,10 @@
 import express from "express";
 import cors from "cors";
-import path from "path";
-import { fileURLToPath } from "url";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 3001;
 const TARGET = "https://smart-trip-planner-api.onrender.com";
-const isProd = process.env.NODE_ENV === "production";
 
 app.use(cors({ origin: true, credentials: true }));
 
@@ -46,14 +42,6 @@ app.use(
   })
 );
 
-if (isProd) {
-  const staticDir = path.resolve(__dirname, "..", "client", "dist");
-  app.use(express.static(staticDir));
-  app.get("*", (_req, res) => {
-    res.sendFile(path.join(staticDir, "index.html"));
-  });
-}
-
 app.listen(PORT, () => {
-  console.log(`STP Proxy running on http://localhost:${PORT} (${isProd ? "production" : "dev"})`);
+  console.log(`STP Proxy running on http://localhost:${PORT}`);
 });

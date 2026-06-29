@@ -1,6 +1,23 @@
 services:
   - type: web
-    name: stp-mvp
-    env: docker
-    dockerfilePath: ./Dockerfile
+    name: stp-server
+    env: node
+    region: oregon
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node server.js
     healthCheckPath: /health
+
+  - type: static
+    name: stp-client
+    env: static
+    region: oregon
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: stp-server
+          type: web
+          property: url
