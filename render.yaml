@@ -9,12 +9,12 @@ services:
     startCommand: node server.js
     healthCheckPath: /health
 
-  - type: static
+  - type: web
     name: stp-client
     env: static
     region: oregon
-    buildCommand: npm install && npm run build
-    staticPublishPath: dist
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/dist
     envVars:
       - key: VITE_API_URL
         fromService:
