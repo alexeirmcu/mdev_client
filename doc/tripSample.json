@@ -1,0 +1,818 @@
+{
+    "tripId": "c1d64195-2b68-414d-a16c-30ccdf8c4a0e",
+    "tripCode": "MADRID-2026-3KTB",
+    "cityId": 1,
+    "cityCode": "madrid",
+    "cityName": "Madrid",
+    "startDate": "2026-06-28",
+    "endDate": "2026-07-02",
+    "baseHotel": {
+        "name": "casa rio rosas",
+        "latitude": 40.44191,
+        "longitude": -3.702777
+    },
+    "travelers": {
+        "adults": 2,
+        "children": 2,
+        "infants": 0
+    },
+    "preferences": {
+        "carAvailable": false,
+        "maxWalkingMinutes": 60,
+        "weatherAwareEnabled": true,
+        "interests": [
+            "Museum",
+            "Plaza",
+            "Park",
+            "Monument"
+        ],
+        "returnToHotelStrategy": 0,
+        "allowMustSeeOvertime": false
+    },
+    "mustSees": [],
+    "status": "GENERATED",
+    "defaultStartHour": "09:00",
+    "days": [
+        {
+            "dayIndex": 0,
+            "date": "2026-06-28",
+            "weatherSummary": "Bad",
+            "isStale": false,
+            "blocks": [
+                {
+                    "blockType": "Morning",
+                    "totalDurationMinutes": 185,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 12,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 16,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 1,
+                            "placeName": "Museo Thyssen-Bornemisza",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 2,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 562,
+                            "estimatedDeparture": 622,
+                            "location": {
+                                "latitude": 40.41635928605382,
+                                "longitude": -3.6948908136558845
+                            }
+                        },
+                        {
+                            "placeId": 2,
+                            "placeName": "Museo Nacional del Prado",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 2,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 3,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 634,
+                            "estimatedDeparture": 694,
+                            "location": {
+                                "latitude": 40.413978006085095,
+                                "longitude": -3.6921894550323486
+                            }
+                        },
+                        {
+                            "placeId": 3,
+                            "placeName": "Museo Nacional Centro de Arte Reina Sofía (MNCARS)",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 3,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 707,
+                            "estimatedDeparture": 767,
+                            "location": {
+                                "latitude": 40.40873653580899,
+                                "longitude": -3.6938217695074558
+                            }
+                        }
+                    ]
+                },
+                {
+                    "blockType": "Afternoon",
+                    "totalDurationMinutes": 191,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 10,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 5,
+                        "bufferMinutes": 10,
+                        "frictionAlert": false
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 4,
+                            "placeName": "Museo Arqueológico Nacional (MAN)",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 3,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 560,
+                            "estimatedDeparture": 620,
+                            "location": {
+                                "latitude": 40.42325921497666,
+                                "longitude": -3.688431683863512
+                            }
+                        },
+                        {
+                            "placeId": 5,
+                            "placeName": "Museo Naval de Madrid",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 2,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 8,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 633,
+                            "estimatedDeparture": 693,
+                            "location": {
+                                "latitude": 40.417720632890976,
+                                "longitude": -3.693210910420808
+                            }
+                        },
+                        {
+                            "placeId": 6,
+                            "placeName": "Museo Sorolla",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 3,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 711,
+                            "estimatedDeparture": 771,
+                            "location": {
+                                "latitude": 40.43524755218695,
+                                "longitude": -3.6923740608315794
+                            }
+                        }
+                    ]
+                },
+                {
+                    "blockType": "Evening",
+                    "totalDurationMinutes": 60,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 9,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 9,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 7,
+                            "placeName": "Museo Cerralbo",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 559,
+                            "estimatedDeparture": 619,
+                            "location": {
+                                "latitude": 40.423884219743115,
+                                "longitude": -3.7147057160461547
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dayIndex": 1,
+            "date": "2026-06-29",
+            "weatherSummary": "Good",
+            "isStale": false,
+            "blocks": [
+                {
+                    "blockType": "Morning",
+                    "totalDurationMinutes": 197,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 8,
+                        "bufferMinutes": 10,
+                        "frictionAlert": false
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 12,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 8,
+                            "placeName": "Museo de Historia (Museo Municipal de Madrid)",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 8,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 558,
+                            "estimatedDeparture": 618,
+                            "location": {
+                                "latitude": 40.425690338290416,
+                                "longitude": -3.7009721143035392
+                            }
+                        },
+                        {
+                            "placeId": 9,
+                            "placeName": "Museo Lázaro Galdiano",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 2,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 9,
+                            "bufferMinutes": 10,
+                            "frictionAlert": true,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 636,
+                            "estimatedDeparture": 696,
+                            "location": {
+                                "latitude": 40.436928528858616,
+                                "longitude": -3.686185970297562
+                            }
+                        },
+                        {
+                            "placeId": 10,
+                            "placeName": "Museo Nacional de Artes Decorativas",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 3,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 715,
+                            "estimatedDeparture": 775,
+                            "location": {
+                                "latitude": 40.41806232403098,
+                                "longitude": -3.6897883706624848
+                            }
+                        }
+                    ]
+                },
+                {
+                    "blockType": "Afternoon",
+                    "totalDurationMinutes": 185,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 11,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 11,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 11,
+                            "placeName": "Plaza de Cibeles",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 2,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 561,
+                            "estimatedDeparture": 621,
+                            "location": {
+                                "latitude": 40.419086625588726,
+                                "longitude": -3.693855362784739
+                            }
+                        },
+                        {
+                            "placeId": 12,
+                            "placeName": "Metropolis Building (Edificio Metrópolis)",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 2,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 3,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 633,
+                            "estimatedDeparture": 693,
+                            "location": {
+                                "latitude": 40.41884779425742,
+                                "longitude": -3.6969553515835907
+                            }
+                        },
+                        {
+                            "placeId": 13,
+                            "placeName": "Alcalá Gate (Puerta de Alcalá)",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 3,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 706,
+                            "estimatedDeparture": 766,
+                            "location": {
+                                "latitude": 40.42010678178234,
+                                "longitude": -3.6883960632814596
+                            }
+                        }
+                    ]
+                },
+                {
+                    "blockType": "Evening",
+                    "totalDurationMinutes": 60,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 13,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 13,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 14,
+                            "placeName": "Fuente de Neptuno",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 563,
+                            "estimatedDeparture": 623,
+                            "location": {
+                                "latitude": 40.41526048337471,
+                                "longitude": -3.69415819644928
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dayIndex": 2,
+            "date": "2026-06-30",
+            "weatherSummary": "Good",
+            "isStale": false,
+            "blocks": [
+                {
+                    "blockType": "Morning",
+                    "totalDurationMinutes": 189,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 11,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 9,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 15,
+                            "placeName": "Círculo de Bellas Artes",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 5,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 561,
+                            "estimatedDeparture": 621,
+                            "location": {
+                                "latitude": 40.41848647958846,
+                                "longitude": -3.6966117471456528
+                            }
+                        },
+                        {
+                            "placeId": 16,
+                            "placeName": "Plaza de la Villa",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 2,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 4,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 636,
+                            "estimatedDeparture": 696,
+                            "location": {
+                                "latitude": 40.415408601788656,
+                                "longitude": -3.710390924213192
+                            }
+                        },
+                        {
+                            "placeId": 17,
+                            "placeName": "Plaza de España",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 3,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 710,
+                            "estimatedDeparture": 770,
+                            "location": {
+                                "latitude": 40.423248867939556,
+                                "longitude": -3.7125205993652344
+                            }
+                        }
+                    ]
+                },
+                {
+                    "blockType": "Afternoon",
+                    "totalDurationMinutes": 186,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 13,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 12,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 18,
+                            "placeName": "Almudena Cathedral (Catedral de la Almudena)",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 4,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 563,
+                            "estimatedDeparture": 623,
+                            "location": {
+                                "latitude": 40.41576693264202,
+                                "longitude": -3.7145161628723145
+                            }
+                        },
+                        {
+                            "placeId": 19,
+                            "placeName": "Puerta del Sol",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 2,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 2,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 637,
+                            "estimatedDeparture": 697,
+                            "location": {
+                                "latitude": 40.41679436967101,
+                                "longitude": -3.703562021255493
+                            }
+                        },
+                        {
+                            "placeId": 20,
+                            "placeName": "Plaza Mayor",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 3,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 709,
+                            "estimatedDeparture": 769,
+                            "location": {
+                                "latitude": 40.41540783650963,
+                                "longitude": -3.707394897937775
+                            }
+                        }
+                    ]
+                },
+                {
+                    "blockType": "Evening",
+                    "totalDurationMinutes": 60,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 11,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 11,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 21,
+                            "placeName": "Plaza de Oriente",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 561,
+                            "estimatedDeparture": 621,
+                            "location": {
+                                "latitude": 40.418325668437966,
+                                "longitude": -3.712196052074432
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "dayIndex": 3,
+            "date": "2026-07-01",
+            "weatherSummary": "Good",
+            "isStale": false,
+            "blocks": [
+                {
+                    "blockType": "Morning",
+                    "totalDurationMinutes": 189,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 10,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 16,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 22,
+                            "placeName": "Plaza del Callao",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 2,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 560,
+                            "estimatedDeparture": 620,
+                            "location": {
+                                "latitude": 40.42014480521912,
+                                "longitude": -3.705762832193117
+                            }
+                        },
+                        {
+                            "placeId": 23,
+                            "placeName": "Plaza de Isabel II",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 2,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                            "transitDurationMinutes": 7,
+                            "bufferMinutes": 10,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 632,
+                            "estimatedDeparture": 692,
+                            "location": {
+                                "latitude": 40.41811399542555,
+                                "longitude": -3.709396616703088
+                            }
+                        },
+                        {
+                            "placeId": 24,
+                            "placeName": "Esta es una plaza",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 3,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 709,
+                            "estimatedDeparture": 769,
+                            "location": {
+                                "latitude": 40.4071715309883,
+                                "longitude": -3.698323726455043
+                            }
+                        }
+                    ]
+                },
+                {
+                    "blockType": "Afternoon",
+                    "totalDurationMinutes": 60,
+                    "transitFromHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 12,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "transitToHotel": {
+                        "transportMode": "WALK_AND_PUBLIC_TRANSPORT",
+                        "durationMinutes": 12,
+                        "bufferMinutes": 10,
+                        "frictionAlert": true
+                    },
+                    "interBlockTransit": null,
+                    "activities": [
+                        {
+                            "placeId": 25,
+                            "placeName": "Plaza de la Almudena",
+                            "durationMinutes": 60,
+                            "sequenceOrder": 1,
+                            "isIndoor": true,
+                            "priority": "Medium",
+                            "transportMode": "",
+                            "transitDurationMinutes": 0,
+                            "bufferMinutes": 0,
+                            "frictionAlert": false,
+                            "overtimeAlert": false,
+                            "isCompleted": false,
+                            "estimatedArrival": 562,
+                            "estimatedDeparture": 622,
+                            "location": {
+                                "latitude": 40.41631960737639,
+                                "longitude": -3.713776929870609
+                            }
+                        }
+                    ]
+                },
+                {
+                    "blockType": "Evening",
+                    "totalDurationMinutes": 0,
+                    "transitFromHotel": null,
+                    "transitToHotel": null,
+                    "interBlockTransit": null,
+                    "activities": []
+                }
+            ]
+        },
+        {
+            "dayIndex": 4,
+            "date": "2026-07-02",
+            "weatherSummary": "Good",
+            "isStale": false,
+            "blocks": [
+                {
+                    "blockType": "Morning",
+                    "totalDurationMinutes": 0,
+                    "transitFromHotel": null,
+                    "transitToHotel": null,
+                    "interBlockTransit": null,
+                    "activities": []
+                },
+                {
+                    "blockType": "Afternoon",
+                    "totalDurationMinutes": 0,
+                    "transitFromHotel": null,
+                    "transitToHotel": null,
+                    "interBlockTransit": null,
+                    "activities": []
+                },
+                {
+                    "blockType": "Evening",
+                    "totalDurationMinutes": 0,
+                    "transitFromHotel": null,
+                    "transitToHotel": null,
+                    "interBlockTransit": null,
+                    "activities": []
+                }
+            ]
+        }
+    ]
+}

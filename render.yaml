@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: stp-mvp
+    env: node
+    buildCommand: cd client && npm install && npm run build
+    startCommand: cd server && npm install && node server.js
+    healthCheckPath: /health

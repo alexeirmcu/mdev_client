@@ -1,0 +1,4 @@
+curl --location 'https://smart-trip-planner-api.onrender.com/api/trips/c1d64195-2b68-414d-a16c-30ccdf8c4a0e' \
+--header 'accept: text/plain' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyLTEiLCJqdGkiOiJhMWIyYzNkNC1lNWY2LTc4OTAtYWJjZC1lZjEyMzQ1Njc4OTAiLCJpc3MiOiJzbWFydC10cmlwLXBsYW5uZXIiLCJhdWQiOiJzbWFydC10cmlwLXBsYW5uZXItYXBpIiwiaWF0IjoxNzUwMDAwMDAwLCJleHAiOjE3OTA3NDcxNjB9.Up8kLUCLwhU6EjWNFsC_tzx-c_S3nh7sbr0Ly6A2-Y0'

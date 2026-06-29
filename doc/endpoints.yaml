@@ -1,0 +1,1011 @@
+openapi: 3.0.3
+info:
+  title: Smart Trip Planner API
+  description: REST API for generating, managing, and real-time replanning of family itineraries optimized by blocks using a heuristic multi-phase algorithm.
+  version: 2.1.0
+servers:
+  - url: https://api.smart-tripplanner.com/v2
+    description: Production server
+paths:
+  /trips:
+    get:
+      summary: List saved trips
+      description: Returns a summarized list of all planned trips with optional filters by destination and date range.
+      operationId: listTrips
+      parameters:
+        - name: cityCode
+          in: query
+          required: false
+          description: Filter by the unique city identifier (e.g. madrid-es).
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          required: false
+          description: Filter trips starting from this date (ISO 8601 YYYY-MM-DD).
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: false
+          description: Filter trips ending on or before this date (ISO 8601 YYYY-MM-DD).
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of trips retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TripSummaryResponse'
+        '422':
+          description: Invalid query parameters.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationResult'
+
+    post:
+      summary: Create a new trip
+      description: Creates a trip with family preferences, base hotel, and selected must-sees. Does NOT generate the itinerary yet — call POST /trips/{tripId}/generate afterwards.
+      operationId: createTrip
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripGenerationRequest'
+      responses:
+        '201':
+          description: Trip created successfully.
+          headers:
+            Location:
+              description: URI of the newly created trip.
+              schema:
+                type: string
+                example: "/api/trips/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripPlanResponse'
+        '400':
+          description: Validation failed (FluentValidation).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationResult'
+        '422':
+          description: Business rule violation (e.g. city not allowed, duplicate must-sees, pinned day out of range).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationResult'
+
+  /trips/{tripId}:
+    get:
+      summary: Get trip details
+      description: Returns the full structured itinerary by days and blocks, along with the activity checklist status.
+      operationId: getTripDetails
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Trip details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripPlanResponse'
+        '404':
+          description: Trip not found.
+        '422':
+          description: Invalid tripId format.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationResult'
+
+    patch:
+      summary: Update trip details
+      description: Allows modifying trip data before the itinerary is generated (status CREATED). Once GENERATED, only must-sees addition/removal and travelers/preferences are editable.
+      operationId: updateTrip
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripUpdateRequest'
+      responses:
+        '200':
+          description: Trip updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripPlanResponse'
+        '400':
+          description: Validation failed.
+        '404':
+          description: Trip not found.
+        '422':
+          description: Business rule violation (e.g. modifying dates when status is GENERATED).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationResult'
+
+    delete:
+      summary: Delete a trip
+      description: Permanently deletes a trip. Only the trip owner can delete.
+      operationId: deleteTrip
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Trip deleted successfully. No content.
+        '404':
+          description: Trip not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: User does not own the trip.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /trips/{tripId}/generate:
+    post:
+      summary: Generate trip itinerary
+      description: Triggers the heuristic itinerary generator for the given trip. Populates DayPlan[] with activities, transit, and timeline scheduling. Requires BaseHotel to be set.
+      operationId: generateTripItinerary
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Itinerary generated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripPlanResponse'
+        '404':
+          description: Trip not found.
+        '422':
+          description: BaseHotel is null, no candidates available, or route is over-constrained.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationResult'
+
+  /trips/{tripId}/weather-refresh:
+    post:
+      summary: Refresh weather data for a trip
+      description: Fetches updated weather forecasts for all trip days and marks days as stale when the weather condition changes. Returns a summary of which days changed and their previous/new weather states.
+      operationId: refreshWeather
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Weather refreshed successfully. Returns changes summary even if no days changed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeatherRefreshResult'
+        '404':
+          description: Trip not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: User does not own the trip.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /trips/{tripId}/regenerate-day:
+    post:
+      summary: Regenerate activities for a specific day
+      description: Uses the replanning engine to rebuild all activities for a single day while preserving completed activities and must-see constraints. Useful when a day becomes stale after weather changes or manual adjustments.
+      operationId: regenerateDay
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegenerateDayRequest'
+      responses:
+        '200':
+          description: Day regenerated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripPlanResponse'
+        '404':
+          description: Trip or day not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: User does not own the trip.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Itinerary not generated yet or day index out of range.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationResult'
+
+  /trips/{tripId}/days/{dayIndex}/completion:
+    patch:
+      summary: Toggle an activity completion status
+      description: Atomically toggles the completion status of a specific activity within a day block of the trip itinerary.
+      operationId: toggleActivityCompletion
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: dayIndex
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivityCompletionRequest'
+      responses:
+        '200':
+          description: Activity completion status updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityCompletionResponse'
+        '404':
+          description: Trip, day, or activity not found in the itinerary.
+        '403':
+          description: User does not own the trip.
+        '422':
+          description: Validation error or business rule violation (e.g. future day completion).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationResult'
+
+  /trips/places/search:
+    post:
+      summary: Search points of interest (Must-sees)
+      description: Retrieves a list of places filtered by city following a cascade search algorithm (local database → Foursquare external API).
+      operationId: searchPlaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaceSearchRequest'
+      responses:
+        '200':
+          description: List of places retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlaceResponse'
+        '422':
+          description: Validation error or external service failure.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationResult'
+
+  /trips/{tripId}/replan:
+    post:
+      summary: Smart replan from current point forward
+      description: Replans activities from the traveler's current day and block forward, with scope (current block, current day, or remaining trip) and weather-aware outdoor→indoor swapping.
+      operationId: smartReplan
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripSmartReplanRequest'
+      responses:
+        '200':
+          description: Trip replanned successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripPlanResponse'
+        '404':
+          description: Trip not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: User does not own the trip.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Business rule violation (e.g. current time after trip end).
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ValidationResult'
+
+components:
+  schemas:
+    TripSummaryResponse:
+      type: object
+      properties:
+        tripId:
+          type: string
+          format: uuid
+          example: "b5a9c123-4321-9876-fedc-ba9876543210"
+        cityId:
+          type: integer
+          format: int64
+          example: 1
+        cityCode:
+          type: string
+          example: "madrid-es"
+        cityName:
+          type: string
+          example: "Madrid, España"
+        startDate:
+          type: string
+          format: date
+          example: "2026-06-15"
+        endDate:
+          type: string
+          format: date
+          example: "2026-06-18"
+        totalMustSees:
+          type: integer
+          example: 5
+        completedActivitiesCount:
+          type: integer
+          example: 2
+        totalActivitiesCount:
+          type: integer
+          example: 8
+
+    TripGenerationRequest:
+      type: object
+      required:
+        - cityCode
+        - startDate
+        - endDate
+        - baseHotel
+        - mustSees
+      properties:
+        cityCode:
+          type: string
+          example: "madrid-es"
+        startDate:
+          type: string
+          format: date
+          example: "2026-06-15"
+        endDate:
+          type: string
+          format: date
+          example: "2026-06-18"
+        defaultStartHour:
+          type: string
+          pattern: '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+          default: "09:00"
+          example: "09:00"
+        baseHotel:
+          $ref: '#/components/schemas/Location'
+        travelers:
+          $ref: '#/components/schemas/TravelersInput'
+        preferences:
+          $ref: '#/components/schemas/TripPreferencesInput'
+        mustSees:
+          type: array
+          items:
+            $ref: '#/components/schemas/MustSeeInput'
+
+    TripUpdateRequest:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        baseHotel:
+          $ref: '#/components/schemas/Location'
+        travelers:
+          $ref: '#/components/schemas/TravelersInput'
+        preferences:
+          $ref: '#/components/schemas/TripPreferencesInput'
+        defaultStartHour:
+          type: string
+          pattern: '^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$'
+        mustSeesToAdd:
+          type: array
+          items:
+            $ref: '#/components/schemas/MustSeeInput'
+        mustSeesToRemove:
+          type: array
+          items:
+            type: integer
+            format: int64
+          description: List of PlaceIds (long) to remove from must-sees.
+
+    Location:
+      type: object
+      required:
+        - name
+        - latitude
+        - longitude
+      properties:
+        name:
+          type: string
+          example: "Hotel RIU Plaza España"
+        latitude:
+          type: number
+          format: double
+          example: 40.4241
+        longitude:
+          type: number
+          format: double
+          example: -3.7109
+
+    TravelersInput:
+      type: object
+      properties:
+        adults:
+          type: integer
+          minimum: 1
+          default: 2
+          example: 2
+        children:
+          type: integer
+          minimum: 0
+          default: 0
+          example: 1
+        infants:
+          type: integer
+          minimum: 0
+          default: 0
+          example: 0
+
+    TripPreferencesInput:
+      type: object
+      properties:
+        carAvailable:
+          type: boolean
+          default: false
+          example: false
+        maxWalkingMinutes:
+          type: integer
+          minimum: 5
+          maximum: 120
+          default: 30
+          example: 30
+        weatherAwareEnabled:
+          type: boolean
+          default: true
+          example: true
+        returnToHotelStrategy:
+          type: string
+          enum: [Always, Never, ProximityBased]
+          default: "Always"
+          description: |
+            Always (default): Each block starts/ends at the hotel.
+            Never: Continuous flow between blocks; only Evening returns to hotel.
+            ProximityBased: Chooses direct route or via-hotel based on shorter total time.
+          example: "Always"
+
+    MustSeeInput:
+      type: object
+      required:
+        - placeId
+        - priority
+      properties:
+        placeId:
+          type: integer
+          format: int64
+          description: Internal PlaceId (long), not the ProviderReferenceId.
+          example: 42
+        priority:
+          type: string
+          enum: [High, Medium, Low]
+          example: "High"
+        pinnedDayIndex:
+          type: integer
+          minimum: 0
+          example: 0
+        pinnedBlock:
+          type: string
+          enum: [Morning, Afternoon, Evening]
+        forceIncludeDespiteWeather:
+          type: boolean
+          default: false
+          description: When true, this must-see is included in the itinerary even if bad weather would normally swap it for an indoor alternative.
+
+    RegenerateDayRequest:
+      type: object
+      required:
+        - dayIndex
+      properties:
+        dayIndex:
+          type: integer
+          minimum: 0
+          description: Zero-based day index within the trip itinerary.
+          example: 1
+
+    TripSmartReplanRequest:
+      type: object
+      required:
+        - currentDateTime
+        - scope
+        - currentBlockWeather
+      properties:
+        currentDateTime:
+          type: string
+          format: date-time
+          example: "2026-06-15T14:15:00Z"
+        scope:
+          type: string
+          enum: [CurrentBlock, CurrentDay, RemainingTrip]
+          description: |
+            Determines the replanning boundary from the traveler's current day and block forward.
+            - `CurrentBlock`: Replanifies only the current block (Morning, Afternoon, or Evening). Use when only the immediate block is affected.
+            - `CurrentDay`: Replanifies the current block and all remaining blocks in the current day. This is the default if an unrecognized scope is provided.
+            - `RemainingTrip`: Replanifies from the current block through the end of the trip. Use for major disruptions (weather, cancellations) that affect the entire remaining itinerary.
+        currentBlockWeather:
+          type: string
+          enum: [Good, Bad]
+          example: "Bad"
+
+    TripPlanResponse:
+      type: object
+      properties:
+        tripId:
+          type: string
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        tripCode:
+          type: string
+          example: "MAD-2026-7X9K"
+        cityId:
+          type: integer
+          format: int64
+          example: 1
+        cityCode:
+          type: string
+          example: "madrid-es"
+        cityName:
+          type: string
+          example: "Madrid"
+        startDate:
+          type: string
+          format: date
+          example: "2026-06-15"
+        endDate:
+          type: string
+          format: date
+          example: "2026-06-18"
+        baseHotel:
+          $ref: '#/components/schemas/Location'
+        travelers:
+          $ref: '#/components/schemas/TravelersInput'
+        preferences:
+          $ref: '#/components/schemas/TripPreferencesInput'
+        mustSees:
+          type: array
+          items:
+            $ref: '#/components/schemas/MustSeeResponse'
+        status:
+          type: string
+          enum: [CREATED, GENERATED, COMPLETED]
+          example: "GENERATED"
+        defaultStartHour:
+          type: string
+          example: "09:00"
+        days:
+          type: array
+          items:
+            $ref: '#/components/schemas/DayPlan'
+
+    MustSeeResponse:
+      type: object
+      properties:
+        placeId:
+          type: integer
+          format: int64
+          example: 42
+        priority:
+          type: string
+          enum: [High, Medium, Low]
+          example: "High"
+        pinnedDayIndex:
+          type: integer
+          example: 0
+        pinnedBlock:
+          type: string
+          enum: [Morning, Afternoon, Evening]
+        forceIncludeDespiteWeather:
+          type: boolean
+          default: false
+
+    DayPlan:
+      type: object
+      properties:
+        dayIndex:
+          type: integer
+          example: 0
+        date:
+          type: string
+          format: date
+          example: "2026-06-15"
+        weatherSummary:
+          type: string
+          enum: [Clear, Good, Bad]
+          example: "Clear"
+        isStale:
+          type: boolean
+          default: false
+          description: Indicates the day's itinerary needs regeneration due to weather changes.
+        blocks:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlockTimeline'
+
+    BlockTimeline:
+      type: object
+      properties:
+        blockType:
+          type: string
+          enum: [Morning, Afternoon, Evening]
+          example: "Morning"
+        blockTotalDurationMinutes:
+          type: integer
+          description: Sum of activity durations + intra-block transit only. Excludes hotel and inter-block transit.
+          example: 195
+        transitFromHotel:
+          $ref: '#/components/schemas/TransitDetails'
+        transitToHotel:
+          $ref: '#/components/schemas/TransitDetails'
+        interBlockTransit:
+          $ref: '#/components/schemas/TransitDetails'
+          description: Direct transit from this block's last activity to the next block's first activity. Null if returning to hotel.
+        activities:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityNode'
+
+    ActivityNode:
+      type: object
+      properties:
+        sequenceOrder:
+          type: integer
+          example: 1
+        placeId:
+          type: integer
+          format: int64
+          description: Internal PlaceId (long).
+          example: 42
+        placeName:
+          type: string
+          example: "Museo del Prado"
+        durationMinutes:
+          type: integer
+          example: 120
+        isIndoor:
+          type: boolean
+          example: true
+        priority:
+          type: string
+          enum: [High, Medium, Low]
+          example: "High"
+        estimatedArrival:
+          type: integer
+          description: Minutes from midnight (e.g. 562 = 09:22).
+          example: 562
+        estimatedDeparture:
+          type: integer
+          description: Minutes from midnight (e.g. 682 = 11:22).
+          example: 682
+        transportMode:
+          type: string
+          enum: [WALK_AND_PUBLIC_TRANSPORT, CAR]
+          example: "WALK_AND_PUBLIC_TRANSPORT"
+        transitDurationMinutes:
+          type: integer
+          example: 15
+        bufferMinutes:
+          type: integer
+          example: 10
+        frictionAlert:
+          type: boolean
+          example: false
+        isCompleted:
+          type: boolean
+          example: false
+
+    TransitDetails:
+      type: object
+      properties:
+        transportMode:
+          type: string
+          enum: [WALK_AND_PUBLIC_TRANSPORT, CAR]
+          example: "WALK_AND_PUBLIC_TRANSPORT"
+        durationMinutes:
+          type: integer
+          example: 20
+        bufferMinutes:
+          type: integer
+          example: 10
+        frictionAlert:
+          type: boolean
+          example: false
+
+    PlaceResponse:
+      type: object
+      properties:
+        providerReferenceId:
+          type: string
+          description: External provider ID (e.g. Foursquare fsq_id).
+          example: "fsq_123abc"
+        name:
+          type: string
+          example: "Museo del Prado"
+        cityId:
+          type: integer
+          format: int64
+          example: 1
+        location:
+          $ref: '#/components/schemas/PlaceLocationModel'
+        typicalDurationMinutes:
+          type: integer
+          example: 120
+        isIndoor:
+          type: boolean
+          example: true
+        isFamilyFriendly:
+          type: boolean
+          example: true
+        isAutoUpdateEnabled:
+          type: boolean
+          example: true
+        openingHours:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpeningHoursWindowModel'
+        attributes:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlaceAttributeModel'
+
+    PlaceLocationModel:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+          example: 40.4168
+        longitude:
+          type: number
+          format: double
+          example: -3.7038
+
+    OpeningHoursWindowModel:
+      type: object
+      properties:
+        dayOfWeek:
+          type: string
+          enum: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
+          example: "Monday"
+        openMinutes:
+          type: integer
+          description: Minutes from midnight.
+          example: 540
+        closeMinutes:
+          type: integer
+          description: Minutes from midnight.
+          example: 1200
+
+    PlaceAttributeModel:
+      type: object
+      properties:
+        provider:
+          type: string
+          example: "foursquare"
+        key:
+          type: string
+          example: "category"
+        value:
+          type: string
+          example: "Museum"
+
+    PlaceSearchRequest:
+      type: object
+      required:
+        - query
+        - cityCode
+      properties:
+        query:
+          type: string
+          minLength: 3
+          example: "Museo"
+        cityCode:
+          type: string
+          example: "madrid-es"
+        maxResults:
+          type: integer
+          minimum: 1
+          maximum: 10
+          default: 10
+          example: 10
+
+    ErrorCode:
+      type: string
+      enum:
+        - MIN_LENGTH_VIOLATION
+        - INVALID_CITY
+        - MAX_RESULTS_EXCEEDED
+        - EXTERNAL_SERVICE_FAILURE
+        - REQUIRED_FIELD
+        - VALIDATION_ERROR
+
+    ValidationResult:
+      type: object
+      properties:
+        errorCode:
+          $ref: '#/components/schemas/ErrorCode'
+        description:
+          type: string
+          example: "The search query must be at least 3 characters long."
+
+    ErrorResponse:
+      type: object
+      properties:
+        errorId:
+          type: string
+          format: uuid
+          example: "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+        title:
+          type: string
+          example: "Trip not found."
+        statusCode:
+          type: integer
+          example: 404
+
+    ActivityCompletionRequest:
+      type: object
+      required:
+        - placeId
+        - isCompleted
+      properties:
+        placeId:
+          type: integer
+          format: int64
+          example: 42
+        isCompleted:
+          type: boolean
+          example: true
+
+    ActivityCompletionResponse:
+      type: object
+      properties:
+        placeId:
+          type: integer
+          format: int64
+          example: 42
+        isCompleted:
+          type: boolean
+          example: true
+        completedCount:
+          type: integer
+          example: 3
+
+    WeatherRefreshResult:
+      type: object
+      properties:
+        updated:
+          type: boolean
+          example: true
+        daysRefreshed:
+          type: integer
+          example: 2
+        changes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DayWeatherChange'
+
+    DayWeatherChange:
+      type: object
+      properties:
+        dayIndex:
+          type: integer
+          example: 0
+        previousWeather:
+          type: string
+          example: "Clear"
+        newWeather:
+          type: string
+          example: "Bad"
