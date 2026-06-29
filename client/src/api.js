@@ -1,4 +1,13 @@
-const BASE = import.meta.env.VITE_API_URL || "/api";
+const PROD_API = import.meta.env.VITE_API_URL;
+function resolveBase() {
+  if (PROD_API) return PROD_API;
+  if (import.meta.env.PROD) {
+    const h = window.location.host;
+    return `https://${h.replace("client", "server")}/api`;
+  }
+  return "/api";
+}
+const BASE = resolveBase();
 
 function getToken() {
   return localStorage.getItem("stp_token");
