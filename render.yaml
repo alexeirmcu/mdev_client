@@ -4,3 +4,6 @@ services:
     env: static
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://smart-trip-planner-api.onrender.com/api
