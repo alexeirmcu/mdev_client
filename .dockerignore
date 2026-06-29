@@ -1,6 +1,0 @@
-node_modules/
-.git/
-.vite/
-*.log
-.DS_Store
-Thumbs.db
