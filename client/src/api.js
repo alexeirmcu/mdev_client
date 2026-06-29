@@ -1,4 +1,3 @@
-const DIRECT = "https://smart-trip-planner-api.onrender.com";
 const BASE = import.meta.env.VITE_API_URL || "/api";
 
 function getToken() {
@@ -29,26 +28,12 @@ async function request(method, path, body) {
   return data;
 }
 
-function directRequest(method, path, body) {
-  const token = getToken();
-  const headers = { Accept: "text/plain", "Content-Type": "application/json" };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
-  const url = `${DIRECT}${path}`;
-  const bodyStr = body !== undefined ? JSON.stringify(body) : undefined;
-  console.log(`[API] >> ${method} ${url}`, body || "");
-  return fetch(url, { method, headers, body: bodyStr }).then((res) => {
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    if (res.status === 204) return null;
-    return res.json().then((data) => { console.log(`[API] << ${res.status} ${method} ${url}`, data); return data; });
-  });
-}
-
 export function getCityInterests(cityCode) {
   return request("GET", `/cities/${cityCode}/interests`);
 }
 
 export function searchPlaces(query, cityCode, maxResults = 10) {
-  return directRequest("POST", "/trips/places/search", {
+  return request("POST", "/trips/places/search", {
     query, cityCode, maxResults, fetchFromExternalIfInsufficient: false,
   });
 }

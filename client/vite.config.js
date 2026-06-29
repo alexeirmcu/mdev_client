@@ -7,8 +7,12 @@ export default defineConfig({
     port: 5173,
     proxy: {
       "/api": {
-        target: "http://localhost:3001",
+        target: "https://smart-trip-planner-api.onrender.com",
         changeOrigin: true,
+        rewrite: (path) =>
+          path === "/api/trips/places/search"
+            ? "/trips/places/search"
+            : path,
       },
     },
   },
