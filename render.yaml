@@ -1,19 +1,6 @@
 services:
   - type: web
-    name: stp-server
-    env: node
-    region: oregon
-    plan: free
-    rootDir: server
-    buildCommand: npm install
-    startCommand: node server.js
-    healthCheckPath: /health
-
-  - type: web
     name: stp-client
     env: static
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://stp-server.onrender.com
