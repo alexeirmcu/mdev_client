@@ -187,6 +187,8 @@ export default function TripDetailsView() {
     const weather = 1;
     try {
       const updated = await replanTrip(tripId, now, scope, weather);
+      setActiveDay(0);
+      setAnimIdx(-1);
       setTrip(updated);
     } catch (err) {
       alert("Replan failed: " + err.message);
