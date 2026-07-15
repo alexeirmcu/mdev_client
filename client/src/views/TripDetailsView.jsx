@@ -73,6 +73,9 @@ export default function TripDetailsView() {
   const [animIdx, setAnimIdx] = useState(-1);
   const animRef = useRef(null);
   const [completing, setCompleting] = useState(new Set());
+  const [showReplan, setShowReplan] = useState(false);
+  const [replanScope, setReplanScope] = useState("CurrentBlock");
+  const [replanWeather, setReplanWeather] = useState(1);
 
   useEffect(() => {
     setLoading(true);
@@ -182,11 +185,10 @@ export default function TripDetailsView() {
 
   async function handleReplan() {
     if (!trip) return;
+    setShowReplan(false);
     const now = new Date().toISOString();
-    const scope = "RemainingTrip";
-    const weather = 1;
     try {
-      const updated = await replanTrip(tripId, now, scope, weather);
+      const updated = await replanTrip(tripId, now, replanScope, replanWeather);
       setActiveDay(0);
       setAnimIdx(-1);
       setTrip(updated);
@@ -219,7 +221,7 @@ export default function TripDetailsView() {
           {trip.status === "CREATED" && (
             <button onClick={() => navigate(`/trips/${trip.tripId}/edit`)} className="text-sm bg-indigo-500 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-600 transition">Edit Trip</button>
           )}
-          <button onClick={handleReplan} className="text-sm bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition">Smart Replan</button>
+          <button onClick={() => setShowReplan(true)} className="text-sm bg-orange-500 text-white px-3 py-1.5 rounded-lg hover:bg-orange-600 transition">Smart Replan</button>
         </div>
       </header>
 
@@ -337,6 +339,36 @@ export default function TripDetailsView() {
           )}
         </div>
       </div>
+
+      {showReplan && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={() => setShowReplan(false)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-bold mb-4">Smart Replan</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Scope</label>
+                <select className="w-full border border-gray-300 rounded-lg p-2 text-sm" value={replanScope} onChange={(e) => setReplanScope(e.target.value)}>
+                  <option value="CurrentBlock">Current Block</option>
+                  <option value="CurrentDay">Current Day</option>
+                  <option value="RemainingTrip">Remaining Trip</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Weather</label>
+                <select className="w-full border border-gray-300 rounded-lg p-2 text-sm" value={replanWeather} onChange={(e) => setReplanWeather(+e.target.value)}>
+                  <option value={0}>Clear</option>
+                  <option value={1}>Good</option>
+                  <option value={2}>Bad</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 mt-6">
+              <button onClick={() => setShowReplan(false)} className="px-4 py-2 text-sm rounded-lg border border-gray-300 hover:bg-gray-50 transition">Cancel</button>
+              <button onClick={handleReplan} className="px-4 py-2 text-sm rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition">Replan</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
