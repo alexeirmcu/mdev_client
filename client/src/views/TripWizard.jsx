@@ -43,9 +43,7 @@ export default function TripWizard() {
     if (!cityCode.trim()) return;
     getCityInterests(cityCode.trim())
       .then((data) => {
-        const list = Array.isArray(data) ? data : [];
-        setAvailableInterests(list);
-        setSelectedInterests([]);
+        setAvailableInterests(Array.isArray(data) ? data : []);
       })
       .catch(() => setAvailableInterests([]));
   }, [cityCode]);
