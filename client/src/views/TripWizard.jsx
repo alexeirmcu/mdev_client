@@ -8,6 +8,7 @@ const PRIORITIES = [
   { label: "Medium", value: 1 },
   { label: "Low", value: 2 },
 ];
+const PRIORITY_MAP = { High: 0, Medium: 1, Low: 2 };
 const STRATEGIES = [
   { value: 0, label: "Always (return to hotel each block)" },
   { value: 1, label: "Never (continuous flow)" },
@@ -67,7 +68,7 @@ export default function TripWizard() {
       setWeatherAware(trip.preferences?.weatherAwareEnabled ?? true);
       setReturnStrategy(trip.preferences?.returnToHotelStrategy ?? 0);
       setSelectedInterests(trip.preferences?.interests || []);
-      const ms = (trip.mustSees || []).map((m) => ({ placeId: m.placeId, priority: m.priority, name: m.placeName || "", pinnedDayIndex: m.pinnedDayIndex ?? null, pinnedBlock: m.pinnedBlock ?? null, forceIncludeDespiteWeather: m.forceIncludeDespiteWeather ?? false }));
+      const ms = (trip.mustSees || []).map((m) => ({ placeId: m.placeId, priority: PRIORITY_MAP[m.priority] ?? m.priority, name: m.placeName || "", pinnedDayIndex: m.pinnedDayIndex ?? null, pinnedBlock: m.pinnedBlock ?? null, forceIncludeDespiteWeather: m.forceIncludeDespiteWeather ?? false }));
       setBasket(ms);
       setOriginalMustSees(ms.filter((m) => m.placeId != null));
     }).catch(() => {});
