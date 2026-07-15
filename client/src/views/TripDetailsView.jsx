@@ -184,7 +184,7 @@ export default function TripDetailsView() {
     if (!trip) return;
     const now = new Date().toISOString();
     const scope = "RemainingTrip";
-    const weather = "Good";
+    const weather = 1;
     try {
       const updated = await replanTrip(tripId, now, scope, weather);
       setTrip(updated);
