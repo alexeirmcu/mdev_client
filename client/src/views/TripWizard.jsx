@@ -391,7 +391,7 @@ export default function TripWizard() {
                     </div>
                     <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
                       <label>Day <input type="number" min={0} className="w-10 border border-gray-300 rounded p-0.5 text-xs" value={b.pinnedDayIndex ?? ""} onChange={(e) => setBasketField(i, "pinnedDayIndex", e.target.value ? +e.target.value : null)} placeholder="-" /></label>
-                      <select className="border border-gray-300 rounded p-0.5 text-xs" value={b.pinnedBlock ?? ""} onChange={(e) => setBasketField(i, "pinnedBlock", e.target.value || null)}>
+                       <select className="border border-gray-300 rounded p-0.5 text-xs" value={b.pinnedBlock ?? ""} onChange={(e) => setBasketField(i, "pinnedBlock", e.target.value ? +e.target.value : null)}>
                         <option value="">Block -</option>
                         <option value={0}>Morning</option>
                         <option value={1}>Afternoon</option>
@@ -580,7 +580,7 @@ export default function TripWizard() {
                   </div>
                   <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
                     <label>Day <input type="number" min={0} className="w-10 border border-gray-300 rounded p-0.5 text-xs" value={b.pinnedDayIndex ?? ""} onChange={(e) => setBasketField(i, "pinnedDayIndex", e.target.value ? +e.target.value : null)} placeholder="-" /></label>
-                    <select className="border border-gray-300 rounded p-0.5 text-xs" value={b.pinnedBlock ?? ""} onChange={(e) => setBasketField(i, "pinnedBlock", e.target.value || null)}>
+                     <select className="border border-gray-300 rounded p-0.5 text-xs" value={b.pinnedBlock ?? ""} onChange={(e) => setBasketField(i, "pinnedBlock", e.target.value ? +e.target.value : null)}>
                       <option value="">Block -</option>
                       <option value={0}>Morning</option>
                       <option value={1}>Afternoon</option>
