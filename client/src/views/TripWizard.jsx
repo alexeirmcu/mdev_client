@@ -69,7 +69,7 @@ export default function TripWizard() {
       setSelectedInterests(trip.preferences?.interests || []);
       const ms = (trip.mustSees || []).map((m) => ({ placeId: m.placeId, priority: m.priority, name: m.placeName || "", pinnedDayIndex: m.pinnedDayIndex ?? null, pinnedBlock: m.pinnedBlock ?? null, forceIncludeDespiteWeather: m.forceIncludeDespiteWeather ?? false }));
       setBasket(ms);
-      setOriginalMustSeeIds(ms.map((m) => m.placeId).filter((id) => id != null));
+      setOriginalMustSees(ms.filter((m) => m.placeId != null));
     }).catch(() => {});
   }, [tripId]);
 
@@ -82,7 +82,7 @@ export default function TripWizard() {
   const [createError, setCreateError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
-  const [originalMustSeeIds, setOriginalMustSeeIds] = useState([]);
+  const [originalMustSees, setOriginalMustSees] = useState([]);
   const [showMapPicker, setShowMapPicker] = useState(false);
 
   function handleSearch() {
@@ -154,7 +154,7 @@ export default function TripWizard() {
     try {
       const trip = await createTrip(payload);
       setCreatedTrip(trip);
-      setOriginalMustSeeIds(basket.map((b) => b.placeId).filter((id) => id != null));
+      setOriginalMustSees(basket.filter((b) => b.placeId != null).map((b) => ({ placeId: b.placeId, priority: b.priority, pinnedDayIndex: b.pinnedDayIndex ?? null, pinnedBlock: b.pinnedBlock ?? null, forceIncludeDespiteWeather: b.forceIncludeDespiteWeather ?? false })));
       setStep("created");
     } catch (err) {
       setCreateError(err.message);
@@ -163,13 +163,38 @@ export default function TripWizard() {
     }
   }
 
+  function mustSeeEqual(a, b) {
+    return a.placeId === b.placeId
+      && a.priority === b.priority
+      && a.pinnedDayIndex === b.pinnedDayIndex
+      && a.pinnedBlock === b.pinnedBlock
+      && a.forceIncludeDespiteWeather === b.forceIncludeDespiteWeather;
+  }
+
   async function handleSaveChanges() {
     if (!createdTrip) return;
-    const currentIds = basket.map((b) => b.placeId).filter((id) => id != null);
-    const mustSeesToAdd = basket
-      .filter((b) => b.placeId != null && !originalMustSeeIds.includes(b.placeId))
-      .map(buildMustSee);
-    const mustSeesToRemove = originalMustSeeIds.filter((id) => !currentIds.includes(id));
+    const current = basket.filter((b) => b.placeId != null);
+    const currentIds = current.map((b) => b.placeId);
+    const origIds = originalMustSees.map((m) => m.placeId);
+
+    const mustSeesToAdd = [];
+    const mustSeesToRemove = [];
+
+    for (const b of current) {
+      const orig = originalMustSees.find((m) => m.placeId === b.placeId);
+      if (!orig) {
+        mustSeesToAdd.push(buildMustSee(b));
+      } else if (!mustSeeEqual(b, orig)) {
+        mustSeesToRemove.push(b.placeId);
+        mustSeesToAdd.push(buildMustSee(b));
+      }
+    }
+    for (const m of originalMustSees) {
+      if (!currentIds.includes(m.placeId)) {
+        mustSeesToRemove.push(m.placeId);
+      }
+    }
+
     const patch = {
       startDate,
       endDate,
@@ -190,7 +215,7 @@ export default function TripWizard() {
     try {
       const updated = await updateTrip(createdTrip.tripId, patch);
       setCreatedTrip(updated);
-      setOriginalMustSeeIds(currentIds);
+      setOriginalMustSees(current.map(buildMustSee));
     } catch (err) {
       setSaveError(err.message);
     } finally {
@@ -357,7 +382,7 @@ export default function TripWizard() {
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-gray-400 mr-1">#{b.placeId}</span>
                       <span className="font-medium truncate flex-1">{b.name || `Place ${b.placeId}`}</span>
-                      <span className="text-xs text-gray-400 mr-2">{originalMustSeeIds.includes(b.placeId) ? "" : "new"}</span>
+                      <span className="text-xs text-gray-400 mr-2">{originalMustSees.some((m) => m.placeId === b.placeId) ? "" : "new"}</span>
                       <select className="text-xs border border-gray-300 rounded mx-1 p-1" value={b.priority} onChange={(e) => setBasketField(i, "priority", +e.target.value)}>
                         {PRIORITIES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
                       </select>
