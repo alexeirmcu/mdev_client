@@ -67,7 +67,7 @@ export default function TripWizard() {
       setWeatherAware(trip.preferences?.weatherAwareEnabled ?? true);
       setReturnStrategy(trip.preferences?.returnToHotelStrategy ?? 0);
       setSelectedInterests(trip.preferences?.interests || []);
-      const ms = (trip.mustSees || []).map((m) => ({ placeId: m.placeId, priority: m.priority, name: m.placeName || "" }));
+      const ms = (trip.mustSees || []).map((m) => ({ placeId: m.placeId, priority: m.priority, name: m.placeName || "", pinnedDayIndex: m.pinnedDayIndex ?? null, pinnedBlock: m.pinnedBlock ?? null, forceIncludeDespiteWeather: m.forceIncludeDespiteWeather ?? false }));
       setBasket(ms);
       setOriginalMustSeeIds(ms.map((m) => m.placeId).filter((id) => id != null));
     }).catch(() => {});
@@ -96,17 +96,25 @@ export default function TripWizard() {
 
   function addToBasket(place) {
     if (basket.some((b) => b.placeId === place.placeId || (b.providerReferenceId && b.providerReferenceId === place.providerReferenceId))) return;
-    setBasket([...basket, { ...place, priority: 1 }]);
+    setBasket([...basket, { ...place, priority: 1, pinnedDayIndex: null, pinnedBlock: null, forceIncludeDespiteWeather: false }]);
   }
 
   function removeFromBasket(idx) {
     setBasket(basket.filter((_, i) => i !== idx));
   }
 
-  function setPriority(idx, p) {
+  function setBasketField(idx, field, value) {
     const copy = [...basket];
-    copy[idx] = { ...copy[idx], priority: p };
+    copy[idx] = { ...copy[idx], [field]: value };
     setBasket(copy);
+  }
+
+  function buildMustSee(b) {
+    const ms = { placeId: b.placeId, priority: b.priority };
+    if (b.pinnedDayIndex != null) ms.pinnedDayIndex = b.pinnedDayIndex;
+    if (b.pinnedBlock != null) ms.pinnedBlock = b.pinnedBlock;
+    if (b.forceIncludeDespiteWeather) ms.forceIncludeDespiteWeather = true;
+    return ms;
   }
 
   function buildPayload() {
@@ -127,10 +135,7 @@ export default function TripWizard() {
         returnToHotelStrategy: returnStrategy,
         interests: selectedInterests,
       },
-      mustSees: basket.map((b) => ({
-        placeId: b.placeId,
-        priority: b.priority,
-      })).filter((m) => m.placeId != null && m.placeId > 0),
+      mustSees: basket.map(buildMustSee).filter((m) => m.placeId != null && m.placeId > 0),
     };
   }
 
@@ -163,7 +168,7 @@ export default function TripWizard() {
     const currentIds = basket.map((b) => b.placeId).filter((id) => id != null);
     const mustSeesToAdd = basket
       .filter((b) => b.placeId != null && !originalMustSeeIds.includes(b.placeId))
-      .map((b) => ({ placeId: b.placeId, priority: b.priority }));
+      .map(buildMustSee);
     const mustSeesToRemove = originalMustSeeIds.filter((id) => !currentIds.includes(id));
     const patch = {
       startDate,
@@ -346,16 +351,28 @@ export default function TripWizard() {
             <fieldset className="bg-white rounded-xl border border-gray-200 p-5">
               <legend className="font-semibold px-2 text-sm text-gray-700">Must-Sees ({basket.length})</legend>
               {basket.length === 0 && <p className="text-sm text-gray-400 py-4 text-center">No must-sees added yet</p>}
-              <div className="space-y-2 max-h-64 overflow-y-auto">
+              <div className="space-y-2 max-h-80 overflow-y-auto">
                 {basket.map((b, i) => (
-                  <div key={i} className="flex items-center justify-between text-sm bg-gray-50 rounded-lg p-2">
-                    <span className="text-xs text-gray-400 mr-1">#{b.placeId}</span>
-                    <span className="font-medium truncate flex-1">{b.name || `Place ${b.placeId}`}</span>
-                    <span className="text-xs text-gray-400 mr-2">{originalMustSeeIds.includes(b.placeId) ? "" : "new"}</span>
-                    <select className="text-xs border border-gray-300 rounded mx-1 p-1" value={b.priority} onChange={(e) => setPriority(i, +e.target.value)}>
-                      {PRIORITIES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
-                    </select>
-                    <button onClick={() => removeFromBasket(i)} className="text-red-500 hover:text-red-700 text-xs font-medium ml-1">&times;</button>
+                  <div key={i} className="text-sm bg-gray-50 rounded-lg p-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-400 mr-1">#{b.placeId}</span>
+                      <span className="font-medium truncate flex-1">{b.name || `Place ${b.placeId}`}</span>
+                      <span className="text-xs text-gray-400 mr-2">{originalMustSeeIds.includes(b.placeId) ? "" : "new"}</span>
+                      <select className="text-xs border border-gray-300 rounded mx-1 p-1" value={b.priority} onChange={(e) => setBasketField(i, "priority", +e.target.value)}>
+                        {PRIORITIES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
+                      </select>
+                      <button onClick={() => removeFromBasket(i)} className="text-red-500 hover:text-red-700 text-xs font-medium ml-1">&times;</button>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                      <label>Day <input type="number" min={0} className="w-10 border border-gray-300 rounded p-0.5 text-xs" value={b.pinnedDayIndex ?? ""} onChange={(e) => setBasketField(i, "pinnedDayIndex", e.target.value ? +e.target.value : null)} placeholder="-" /></label>
+                      <select className="border border-gray-300 rounded p-0.5 text-xs" value={b.pinnedBlock ?? ""} onChange={(e) => setBasketField(i, "pinnedBlock", e.target.value || null)}>
+                        <option value="">Block -</option>
+                        <option value={0}>Morning</option>
+                        <option value={1}>Afternoon</option>
+                        <option value={2}>Evening</option>
+                      </select>
+                      <label className="flex items-center gap-1"><input type="checkbox" checked={!!b.forceIncludeDespiteWeather} onChange={(e) => setBasketField(i, "forceIncludeDespiteWeather", e.target.checked)} /> Force</label>
+                    </div>
                   </div>
                 ))}
             </div>
@@ -525,14 +542,26 @@ export default function TripWizard() {
           <fieldset className="bg-white rounded-xl border border-gray-200 p-5">
             <legend className="font-semibold px-2 text-sm text-gray-700">Basket ({basket.length})</legend>
             {basket.length === 0 && <p className="text-sm text-gray-400 py-4 text-center">No must-sees added yet</p>}
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+            <div className="space-y-2 max-h-80 overflow-y-auto">
               {basket.map((b, i) => (
-                <div key={i} className="flex items-center justify-between text-sm bg-gray-50 rounded-lg p-2">
-                  <span className="font-medium truncate flex-1">{b.name}</span>
-                  <select className="text-xs border border-gray-300 rounded mx-2 p-1" value={b.priority} onChange={(e) => setPriority(i, +e.target.value)}>
-                    {PRIORITIES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
-                  </select>
-                  <button onClick={() => removeFromBasket(i)} className="text-red-500 hover:text-red-700 text-xs font-medium">&times;</button>
+                <div key={i} className="text-sm bg-gray-50 rounded-lg p-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium truncate flex-1">{b.name}</span>
+                    <select className="text-xs border border-gray-300 rounded mx-2 p-1" value={b.priority} onChange={(e) => setBasketField(i, "priority", +e.target.value)}>
+                      {PRIORITIES.map((p) => (<option key={p.value} value={p.value}>{p.label}</option>))}
+                    </select>
+                    <button onClick={() => removeFromBasket(i)} className="text-red-500 hover:text-red-700 text-xs font-medium">&times;</button>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
+                    <label>Day <input type="number" min={0} className="w-10 border border-gray-300 rounded p-0.5 text-xs" value={b.pinnedDayIndex ?? ""} onChange={(e) => setBasketField(i, "pinnedDayIndex", e.target.value ? +e.target.value : null)} placeholder="-" /></label>
+                    <select className="border border-gray-300 rounded p-0.5 text-xs" value={b.pinnedBlock ?? ""} onChange={(e) => setBasketField(i, "pinnedBlock", e.target.value || null)}>
+                      <option value="">Block -</option>
+                      <option value={0}>Morning</option>
+                      <option value={1}>Afternoon</option>
+                      <option value={2}>Evening</option>
+                    </select>
+                    <label className="flex items-center gap-1"><input type="checkbox" checked={!!b.forceIncludeDespiteWeather} onChange={(e) => setBasketField(i, "forceIncludeDespiteWeather", e.target.checked)} /> Force</label>
+                  </div>
                 </div>
               ))}
             </div>
