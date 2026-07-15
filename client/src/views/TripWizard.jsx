@@ -68,7 +68,7 @@ export default function TripWizard() {
       setWeatherAware(trip.preferences?.weatherAwareEnabled ?? true);
       setReturnStrategy(trip.preferences?.returnToHotelStrategy ?? 0);
       setSelectedInterests(trip.preferences?.interests || []);
-      const ms = (trip.mustSees || []).map((m) => ({ placeId: m.placeId, priority: PRIORITY_MAP[m.priority] ?? m.priority, name: m.placeName || "", pinnedDayIndex: m.pinnedDayIndex ?? null, pinnedBlock: m.pinnedBlock ?? null, forceIncludeDespiteWeather: m.forceIncludeDespiteWeather ?? false }));
+      const ms = (trip.mustSees || []).map((m) => ({ placeId: m.placeId, priority: PRIORITY_MAP[m.priority] ?? m.priority, name: m.placeName || "", pinnedDayIndex: m.pinnedDayIndex != null ? +m.pinnedDayIndex : null, pinnedBlock: m.pinnedBlock != null ? +m.pinnedBlock : null, forceIncludeDespiteWeather: m.forceIncludeDespiteWeather ?? false }));
       setBasket(ms);
       setOriginalMustSees(ms.filter((m) => m.placeId != null));
     }).catch(() => {});
@@ -112,8 +112,8 @@ export default function TripWizard() {
 
   function buildMustSee(b) {
     const ms = { placeId: b.placeId, priority: b.priority };
-    if (b.pinnedDayIndex != null) ms.pinnedDayIndex = b.pinnedDayIndex;
-    if (b.pinnedBlock != null) ms.pinnedBlock = b.pinnedBlock;
+    if (b.pinnedDayIndex != null) ms.pinnedDayIndex = +b.pinnedDayIndex;
+    if (b.pinnedBlock != null) ms.pinnedBlock = +b.pinnedBlock;
     if (b.forceIncludeDespiteWeather) ms.forceIncludeDespiteWeather = true;
     return ms;
   }
@@ -155,7 +155,7 @@ export default function TripWizard() {
     try {
       const trip = await createTrip(payload);
       setCreatedTrip(trip);
-      setOriginalMustSees(basket.filter((b) => b.placeId != null).map((b) => ({ placeId: b.placeId, priority: b.priority, pinnedDayIndex: b.pinnedDayIndex ?? null, pinnedBlock: b.pinnedBlock ?? null, forceIncludeDespiteWeather: b.forceIncludeDespiteWeather ?? false })));
+      setOriginalMustSees(basket.filter((b) => b.placeId != null).map((b) => ({ placeId: b.placeId, priority: b.priority, pinnedDayIndex: b.pinnedDayIndex != null ? +b.pinnedDayIndex : null, pinnedBlock: b.pinnedBlock != null ? +b.pinnedBlock : null, forceIncludeDespiteWeather: b.forceIncludeDespiteWeather ?? false })));
       setStep("created");
     } catch (err) {
       setCreateError(err.message);
