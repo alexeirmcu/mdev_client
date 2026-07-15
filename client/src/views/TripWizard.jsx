@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { searchPlaces, createTrip, updateTrip, generateItinerary, getTripDetails, getCityInterests } from "../api";
+import MapPicker from "./MapPicker";
 
 const PRIORITIES = [
   { label: "High", value: 0 },
@@ -84,6 +85,7 @@ export default function TripWizard() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [originalMustSeeIds, setOriginalMustSeeIds] = useState([]);
+  const [showMapPicker, setShowMapPicker] = useState(false);
 
   function handleSearch() {
     if (!searchQuery.trim() || searchQuery.length < 3) return;
@@ -207,8 +209,7 @@ export default function TripWizard() {
   }
 
   if (step === "created" || step === "generating") {
-    return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
+    return (<>
         <div className="flex items-center justify-between mb-6">
           <div>
             <button onClick={() => navigate("/trips")} className="text-sm text-gray-500 hover:text-indigo-600 transition">&larr; Dashboard</button>
@@ -261,6 +262,7 @@ export default function TripWizard() {
                     <input type="number" step="any" className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none" value={hotelLng} onChange={(e) => setHotelLng(e.target.value)} />
                   </div>
                 </div>
+                <button type="button" onClick={() => setShowMapPicker(true)} className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">&larr; Pick on map</button>
               </div>
             </fieldset>
 
@@ -358,12 +360,20 @@ export default function TripWizard() {
                     <button onClick={() => removeFromBasket(i)} className="text-red-500 hover:text-red-700 text-xs font-medium ml-1">&times;</button>
                   </div>
                 ))}
-              </div>
-            </fieldset>
-          </div>
+            </div>
+          </fieldset>
         </div>
       </div>
-    );
+      {showMapPicker && (
+        <MapPicker
+          lat={parseFloat(hotelLat) || null}
+          lng={parseFloat(hotelLng) || null}
+          onConfirm={(lat, lng) => { setHotelLat(String(lat)); setHotelLng(String(lng)); setShowMapPicker(false); }}
+          onClose={() => setShowMapPicker(false)}
+        />
+      )}
+    </>
+  );
   }
 
   return (
@@ -411,6 +421,7 @@ export default function TripWizard() {
                   <input type="number" step="any" className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-indigo-400 focus:outline-none" value={hotelLng} onChange={(e) => setHotelLng(e.target.value)} placeholder="-3.7109" />
                 </div>
               </div>
+              <button type="button" onClick={() => setShowMapPicker(true)} className="text-sm text-indigo-600 hover:text-indigo-800 font-medium">&larr; Pick on map</button>
             </div>
           </fieldset>
 
@@ -539,6 +550,14 @@ export default function TripWizard() {
           </button>
         </div>
       </div>
+      {showMapPicker && (
+        <MapPicker
+          lat={parseFloat(hotelLat) || null}
+          lng={parseFloat(hotelLng) || null}
+          onConfirm={(lat, lng) => { setHotelLat(String(lat)); setHotelLng(String(lng)); setShowMapPicker(false); }}
+          onClose={() => setShowMapPicker(false)}
+        />
+      )}
     </div>
   );
 }
