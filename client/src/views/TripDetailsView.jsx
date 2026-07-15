@@ -341,7 +341,7 @@ export default function TripDetailsView() {
       </div>
 
       {showReplan && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={() => setShowReplan(false)}>
+        <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center" onClick={() => setShowReplan(false)}>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-lg font-bold mb-4">Smart Replan</h2>
             <div className="space-y-4">
