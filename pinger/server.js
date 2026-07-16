@@ -4,8 +4,7 @@ const app = express();
 const PORT = process.env.PORT || 3002;
 
 // ── Hardcoded URLs (actualizar según deploy) ──
-let STP_SERVER = process.env.STP_SERVER || "https://stp-server-hdlq.onrender.com";
-if (STP_SERVER && !STP_SERVER.startsWith("http")) STP_SERVER = `https://${STP_SERVER}`;
+const STP_SERVER = "https://stp-server-hdlq.onrender.com";
 const EXTERNAL_API = "https://smart-trip-planner-api.onrender.com";
 const INTERVAL_MS = 10 * 60 * 1000;
 
