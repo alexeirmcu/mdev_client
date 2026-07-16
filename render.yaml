@@ -4,6 +4,8 @@ services:
     env: node
     region: oregon
     plan: free
+    branch: main
+    autoDeploy: true
     rootDir: pinger
     buildCommand: npm install
     startCommand: node server.js
@@ -19,6 +21,8 @@ services:
     env: node
     region: oregon
     plan: free
+    branch: main
+    autoDeploy: true
     rootDir: server
     buildCommand: npm install
     startCommand: node server.js
@@ -33,5 +37,7 @@ services:
   - type: web
     name: stp-client
     env: static
+    branch: main
+    autoDeploy: true
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/dist
