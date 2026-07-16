@@ -7,7 +7,8 @@ const PORT = process.env.PORT || 3001;
 const TARGET = "https://smart-trip-planner-api.onrender.com";
 
 // ── Hardcoded pinger URL (actualizar según deploy) ──
-const PINGER = process.env.PINGER_URL || "https://stp-pinger.onrender.com";
+let PINGER = process.env.PINGER_URL || "https://stp-pinger.onrender.com";
+if (PINGER && !PINGER.startsWith("http")) PINGER = `https://${PINGER}`;
 const INTERVAL_MS = 10 * 60 * 1000;
 
 app.use(cors({ origin: true, credentials: true }));
