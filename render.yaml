@@ -1,5 +1,20 @@
 services:
   - type: web
+    name: stp-pinger
+    env: node
+    region: oregon
+    plan: free
+    rootDir: pinger
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: STP_SERVER_URL
+        fromService:
+          name: stp-server
+          type: web
+          property: host
+
+  - type: web
     name: stp-server
     env: node
     region: oregon
@@ -8,6 +23,12 @@ services:
     buildCommand: npm install
     startCommand: node server.js
     healthCheckPath: /health
+    envVars:
+      - key: PINGER_URL
+        fromService:
+          name: stp-pinger
+          type: web
+          property: host
 
   - type: web
     name: stp-client
