@@ -4,40 +4,22 @@ services:
     env: node
     region: oregon
     plan: free
-    branch: main
-    autoDeploy: true
     rootDir: pinger
     buildCommand: npm install
     startCommand: node server.js
-    envVars:
-      - key: STP_SERVER_URL
-        fromService:
-          name: stp-server
-          type: web
-          property: host
 
   - type: web
     name: stp-server
     env: node
     region: oregon
     plan: free
-    branch: main
-    autoDeploy: true
     rootDir: server
     buildCommand: npm install
     startCommand: node server.js
     healthCheckPath: /health
-    envVars:
-      - key: PINGER_URL
-        fromService:
-          name: stp-pinger
-          type: web
-          property: host
 
   - type: web
     name: stp-client
     env: static
-    branch: main
-    autoDeploy: true
     buildCommand: cd client && npm install && npm run build
     staticPublishPath: client/dist
