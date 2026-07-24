@@ -8,7 +8,7 @@ const TARGET = "https://smart-trip-planner-api.onrender.com";
 
 // ── Hardcoded pinger URL (actualizar según deploy) ──
 const PINGER = "https://stp-pinger.onrender.com";
-const INTERVAL_MS = 10 * 60 * 1000;
+const INTERVAL_MS = 5 * 60 * 1000;
 
 app.use(cors({ origin: true, credentials: true }));
 
