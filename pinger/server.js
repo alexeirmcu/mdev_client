@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3002;
 // ── Hardcoded URLs (actualizar según deploy) ──
 const STP_SERVER = "https://stp-server-hdlq.onrender.com";
 const EXTERNAL_API = "https://smart-trip-planner-api.onrender.com";
-const INTERVAL_MS = 10 * 60 * 1000;
+const INTERVAL_MS = 4 * 60 * 1000;
 
 app.get("/health", (_req, res) => res.send("OK"));
 
