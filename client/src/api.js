@@ -1,9 +1,17 @@
+function ensureDomain(host) {
+  if (!host.includes(".") && !host.includes("localhost")) return `${host}.onrender.com`;
+  return host;
+}
+
 function resolveBase() {
   const env = import.meta.env.VITE_API_URL;
-  if (env) return env.startsWith("http") ? env : `https://${env}/api`;
+  if (env) {
+    if (env.startsWith("http")) return env;
+    return `https://${ensureDomain(env)}/api`;
+  }
   if (import.meta.env.PROD) {
     const h = window.location.host;
-    return `https://${h.replace("client", "server")}/api`;
+    return `https://${ensureDomain(h.replace("client", "server"))}/api`;
   }
   return "/api";
 }
