@@ -6,11 +6,8 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const TARGET = "https://smart-trip-planner-api.onrender.com";
 
-// ── Hardcoded pinger URL (actualizar según deploy) ──
-const PINGER = "https://stp-pinger.onrender.com";
-const INTERVAL_MS = 5 * 60 * 1000;
-
 app.use(cors({ origin: true, credentials: true }));
+app.options("/api/*", cors({ origin: true, credentials: true }));
 
 app.get("/health", (_req, res) => res.send("OK"));
 
@@ -28,23 +25,14 @@ app.use(
         if (auth) proxyReq.setHeader("Authorization", auth);
         proxyReq.setHeader("Accept", "text/plain");
       },
+      error: (err, _req, res) => {
+        console.error("Proxy error:", err.message);
+        if (res.writeHead) res.writeHead(502);
+      },
     },
   })
 );
 
-async function pingPinger() {
-  try {
-    const res = await fetch(`${PINGER}/health`, { signal: AbortSignal.timeout(10000) });
-    console.log(`[PING] pinger → ${res.status}`);
-  } catch (err) {
-    console.log(`[PING] pinger ERR ${err.message}`);
-  }
-}
-
-pingPinger();
-setInterval(pingPinger, INTERVAL_MS);
-
 app.listen(PORT, () => {
   console.log(`STP Proxy running on http://localhost:${PORT}`);
-  console.log(`  → pinging ${PINGER}/health`);
 });
