@@ -1,6 +1,6 @@
-const PROD_API = import.meta.env.VITE_API_URL;
 function resolveBase() {
-  if (PROD_API) return PROD_API;
+  const env = import.meta.env.VITE_API_URL;
+  if (env) return env.startsWith("http") ? env : `https://${env}/api`;
   if (import.meta.env.PROD) {
     const h = window.location.host;
     return `https://${h.replace("client", "server")}/api`;
