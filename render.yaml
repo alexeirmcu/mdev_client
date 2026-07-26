@@ -1,14 +1,5 @@
 services:
   - type: web
-    name: stp-pinger
-    env: node
-    region: oregon
-    plan: free
-    rootDir: pinger
-    buildCommand: npm install
-    startCommand: node server.js
-
-  - type: web
     name: stp-server
     env: node
     region: oregon
