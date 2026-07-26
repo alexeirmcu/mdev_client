@@ -1,25 +1,23 @@
 import express from "express";
-import cors from "cors";
 import { createProxyMiddleware } from "http-proxy-middleware";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const TARGET = "https://smart-trip-planner-api.onrender.com";
 
-function setCors(origin, headers) {
-  headers["Access-Control-Allow-Origin"] = origin || "*";
-  headers["Access-Control-Allow-Credentials"] = "true";
-  headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Accept";
-  headers["Access-Control-Allow-Methods"] = "GET, POST, PATCH, DELETE, OPTIONS";
+function corsMiddleware(req, res, next) {
+  const origin = req.headers["origin"] || "*";
+  res.setHeader("Access-Control-Allow-Origin", origin);
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  next();
 }
 
-app.use(cors({ origin: true, credentials: true }));
-app.options("/api/*", cors({ origin: true, credentials: true }));
+app.use(corsMiddleware);
 
 app.get("/health", (_req, res) => res.send("OK"));
-
-// Handle OPTIONS preflight before proxy
-app.options("*", (_req, res) => res.sendStatus(204));
 
 app.use(
   createProxyMiddleware({
@@ -36,11 +34,14 @@ app.use(
         proxyReq.setHeader("Accept", "text/plain");
       },
       proxyRes: (proxyRes, req) => {
-        setCors(req.headers["origin"], proxyRes.headers);
+        const origin = req.headers["origin"] || "*";
+        proxyRes.headers["Access-Control-Allow-Origin"] = origin;
+        proxyRes.headers["Access-Control-Allow-Credentials"] = "true";
       },
       error: (err, _req, res) => {
         console.error("Proxy error:", err.message);
-        if (res.writeHead) { res.writeHead(502, { "Content-Type": "text/plain" }); res.end("Proxy error"); }
+        if (!res.headersSent) res.writeHead(502, { "Content-Type": "text/plain" });
+        res.end("Proxy error");
       },
     },
   })
